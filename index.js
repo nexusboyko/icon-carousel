@@ -1,14 +1,17 @@
 const carousel = document.querySelector('.carousel');
 const icons = carousel.querySelectorAll('.icon');
 const angle_from_center = (2 * Math.PI) / icons.length;
-const radius_x = 300; // Adjust the horizontal radius
-const radius_y = 100; // Adjust the vertical radius
+const radius_x = 300; // adjust the horizontal radius
+const radius_y = 100; // adjust the vertical radius
 const x_offset = -60;
 let angle = 0;
 
-// makes icons draggable with mouse cursor
-// (comment out if you don't want it to be interactive)
 
+
+/**
+ * click and drag icons using cursor
+ * (comment this out if you don't want it to be interactive)
+ */
 let is_dragging = false;
 let previous_x = 0;
 
@@ -34,29 +37,45 @@ carousel.addEventListener('mousedown', handleMouseDown);
 carousel.addEventListener('mousemove', handleMouseMove);
 window.addEventListener('mouseup', handleMouseUp);
 
-// makes a rotating icon carousel
 
+
+/**
+ * creates auto-rotating icon carousel
+ */
 setInterval(() => {
   icons.forEach((icon, index) => {
     const x = x_offset + Math.cos(angle + index * angle_from_center) * radius_x;
     const y = Math.sin(angle + index * angle_from_center) * radius_y;
     const z_index = Math.round(y) + radius_y; // calculate z-index based on y position
-    const blur = (200 - z_index) / 30; // calculate blur based on z-index
-    const size = z_index/5 + 50; // calculate icon size based on z-index
 
-    // (icons are blurred the further back they are)
+    // determines blur amount based on z-index
+    const blur = (200 - z_index) / 30;
 
     icon.style.transform = `translate(${x}%, ${y}%)`;
     icon.style.zIndex = z_index;
-    icon.style.filter = `blur(${blur}px)`;
-    
-    // scales icons (larger in the foreground, smaller in background) 
 
+    /**
+     * determines size for icon scaling based on z-index (... + <min. width/height>)
+     * (tweak this calculation to get desired icon size)
+     */
+    const size = z_index/5 + 50;
+
+    /**
+     * applies blur effect to icons
+     * (icons are blurred the further back they are)
+     */
+    icon.style.filter = `blur(${blur}px)`; // (comment this out if you don't want blurring)
+
+    /**
+     * scales icons to get larger in the foreground and smaller in background
+     * (comment this out if you don't want icons to scale)
+     */
     const iconify_icon = icon.querySelector('iconify-icon');
     if (iconify_icon) {
       iconify_icon.width = `${size}px`; // set the width based on size
       iconify_icon.height = `${size}px`; // set the height based on size
     }
+
   });
 
   icons.forEach((icon) => icon.classList.remove('active'));
